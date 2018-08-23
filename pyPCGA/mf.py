@@ -1,5 +1,6 @@
 import flopy
 import flopy.utils.binaryfile as bf
+import json
 import numpy as np
 import os
 from shutil import copy2, rmtree
@@ -141,6 +142,15 @@ class Model:
         simul_obs = simul_obs.reshape(-1)  # 1d array
         hds.close()
 
+        outputFileName = os.path.join(mydir, 'output.txt')
+        f = open(outputFileName, 'a+')
+        #json.dump(logHK.tolist(), f)
+        f.write("Q_loc: %s \r\n" % (Q_loc,))
+        #json.dump(idx, f)
+        #json.dump(simul_obs.tolist(), f)
+        #json.dump(obs_locmat.tolist(), f)
+        f.close
+
         if self.deletedir:
             rmtree(mydir, ignore_errors=True)
             # rmtree(sim_dir)
@@ -166,7 +176,10 @@ class Model:
             ncores = self.ncores
 
         method_args = range(HK.shape[1])
+        print(method_args, HK.shape)
+        print(HK)
         args_map = [(HK[:, arg:arg + 1], arg) for arg in method_args]
+        
 
         if par:
             pool = Pool(processes=ncores)
